@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// 1. THE MISSING ENTRY POINT
 void main() {
   runApp(const MyApp());
 }
@@ -14,20 +13,20 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF007AFF),
+          brightness: Brightness.light,
+        ),
       ),
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Weather Forecast'),
-          centerTitle: true,
-        ),
-        body: const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Center(
+        backgroundColor: const Color(0xFFF0F8FF),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
             child: WeatherCard(
-              cityName: 'Bangkok',
+              city: 'Bangkok',
               temperature: 32.5,
-              condition: WeatherCondition.sunny,
+              condition: 'sunny',
               humidity: 65,
             ),
           ),
@@ -37,66 +36,77 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// --- YOUR ORIGINAL CODE BELOW ---
-
-enum WeatherCondition { sunny, cloudy, rainy }
-
 class WeatherCard extends StatelessWidget {
-  final String cityName;
+  final String city;
   final double temperature;
-  final WeatherCondition condition;
-  final double humidity;
+  final String condition;
+  final int humidity;
 
   const WeatherCard({
     super.key,
-    required this.cityName,
+    required this.city,
     required this.temperature,
     required this.condition,
     required this.humidity,
   });
 
+  IconData _getWeatherIcon(String cond) {
+    switch (cond.toLowerCase()) {
+      case 'sunny':
+        return Icons.wb_sunny;
+      case 'cloudy':
+        return Icons.cloud;
+      case 'rainy':
+        return Icons.water_drop;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
+  Color _getIconColor(String cond) {
+    switch (cond.toLowerCase()) {
+      case 'sunny':
+        return Colors.orangeAccent;
+      case 'cloudy':
+        return Colors.blueGrey;
+      case 'rainy':
+        return const Color(0xFF007AFF);
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    IconData weatherIcon;
-    Color iconColor;
-    switch (condition) {
-      case WeatherCondition.sunny:
-        weatherIcon = Icons.wb_sunny_rounded;
-        iconColor = Colors.orange;
-        break;
-      case WeatherCondition.cloudy:
-        weatherIcon = Icons.cloud_rounded;
-        iconColor = Colors.blueGrey;
-        break;
-      case WeatherCondition.rainy:
-        weatherIcon = Icons.umbrella_rounded;
-        iconColor = Colors.blue;
-        break;
-    }
-
     return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24.0),
-        side: BorderSide(color: theme.colorScheme.outlineVariant, width: 1),
-      ),
-      color: theme.colorScheme.surfaceContainerLow,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
+      elevation: 4,
+      shadowColor: const Color(0xFF007AFF).withOpacity(0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+      color: Colors.white,
+      child: Container(
+        width: 320,
+        padding: const EdgeInsets.all(24.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.0),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, const Color(0xFFE6F2FF)],
+          ),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              cityName,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
-              ),
+              city,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1C1C1E),
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -104,37 +114,45 @@ class WeatherCard extends StatelessWidget {
               children: [
                 Text(
                   '${temperature.toStringAsFixed(1)}°C',
-                  style: theme.textTheme.displayMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+                  style: const TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF007AFF),
+                    letterSpacing: -1,
                   ),
                 ),
-                Icon(weatherIcon, size: 48, color: iconColor),
+                Icon(
+                  _getWeatherIcon(condition),
+                  size: 56,
+                  color: _getIconColor(condition),
+                ),
               ],
             ),
+            const SizedBox(height: 20),
+            Container(
+              height: 1,
+              color: const Color(0xFF007AFF).withOpacity(0.15),
+            ),
             const SizedBox(height: 16),
-            Divider(color: theme.colorScheme.outlineVariant, height: 1),
-            const SizedBox(height: 12),
             Row(
               children: [
-                Icon(
-                  Icons.water_drop_outlined,
-                  size: 20,
-                  color: theme.colorScheme.secondary,
-                ),
+                const Icon(Icons.opacity, size: 20, color: Color(0xFF007AFF)),
                 const SizedBox(width: 8),
-                Text(
-                  'Humidity:',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                const Text(
+                  'Humidity',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const Spacer(),
                 Text(
-                  '${humidity.toStringAsFixed(0)}%',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  '$humidity%',
+                  style: const TextStyle(
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
+                    color: Color(0xFF1C1C1E),
                   ),
                 ),
               ],
