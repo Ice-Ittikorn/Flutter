@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'pages/ai_chat_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -10,155 +14,125 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      title: 'My Profile',
       theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF007AFF),
-          brightness: Brightness.light,
-        ),
       ),
-      home: Scaffold(
-        backgroundColor: const Color(0xFFF0F8FF),
-        body: const Center(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: WeatherCard(
-              city: 'Bangkok',
-              temperature: 32.5,
-              condition: 'sunny',
-              humidity: 65,
-            ),
-          ),
-        ),
-      ),
+      home: const ProfilePage(),
     );
   }
 }
 
-class WeatherCard extends StatelessWidget {
-  final String city;
-  final double temperature;
-  final String condition;
-  final int humidity;
-
-  const WeatherCard({
-    super.key,
-    required this.city,
-    required this.temperature,
-    required this.condition,
-    required this.humidity,
-  });
-
-  IconData _getWeatherIcon(String cond) {
-    switch (cond.toLowerCase()) {
-      case 'sunny':
-        return Icons.wb_sunny;
-      case 'cloudy':
-        return Icons.cloud;
-      case 'rainy':
-        return Icons.water_drop;
-      default:
-        return Icons.help_outline;
-    }
-  }
-
-  Color _getIconColor(String cond) {
-    switch (cond.toLowerCase()) {
-      case 'sunny':
-        return Colors.orangeAccent;
-      case 'cloudy':
-        return Colors.blueGrey;
-      case 'rainy':
-        return const Color(0xFF007AFF);
-      default:
-        return Colors.grey;
-    }
-  }
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shadowColor: const Color(0xFF007AFF).withOpacity(0.2),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-      color: Colors.white,
-      child: Container(
-        width: 320,
-        padding: const EdgeInsets.all(24.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24.0),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.white, const Color(0xFFE6F2FF)],
-          ),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('โปรไฟล์ของฉัน'),
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              city,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1C1C1E),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${temperature.toStringAsFixed(1)}°C',
-                  style: const TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF007AFF),
-                    letterSpacing: -1,
-                  ),
-                ),
-                Icon(
-                  _getWeatherIcon(condition),
-                  size: 56,
-                  color: _getIconColor(condition),
-                ),
-              ],
-            ),
             const SizedBox(height: 20),
-            Container(
-              height: 1,
-              color: const Color(0xFF007AFF).withOpacity(0.15),
+
+            // รูปโปรไฟล์
+            const CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.orange,
+              child: Icon(Icons.person, size: 60, color: Colors.white),
             ),
+
             const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(Icons.opacity, size: 20, color: Color(0xFF007AFF)),
-                const SizedBox(width: 8),
-                const Text(
-                  'Humidity',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w500,
-                  ),
+
+            // ชื่อ — TODO: เปลี่ยนเป็นชื่อของคุณ
+            const Text(
+              'ITTIKORN TONGSIMA',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 8),
+
+            // รหัสนักศึกษา — TODO: เปลี่ยนเป็นรหัสของคุณ
+            const Text(
+              'รหัสนักศึกษา: 67030261',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Card ข้อมูล
+            Card(
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    _buildInfoRow(Icons.school, 'คณะ', 'เทคโนโลยีคอมพิวเตอร์'),
+                    const Divider(),
+                    _buildInfoRow(
+                      Icons.code,
+                      'วิชาที่ชอบ',
+                      'Project + Mobile Development ครับ ',
+                    ),
+                    const Divider(),
+                    _buildInfoRow(
+                      Icons.star,
+                      'เป้าหมาย',
+                      'ผ่านโปรเจคเเละพัฒนาแอปที่สมบูรณ์ซักตัว',
+                    ),
+                    const Divider(),
+                    _buildInfoRow(
+                      Icons.star,
+                      'อาหารที่ชอบ',
+                      'ก๋วยเตี๋ยวหมูน้ำตก',
+                    ),
+                    const Divider(),
+                    _buildInfoRow(
+                      Icons.star,
+                      'สัตว์เลี้ยงที่ชอบ',
+                      'เเมงกระพรุน',
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AiChatPage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.smart_toy),
+                      label: const Text('ทดลอง AI Chat'),
+                    ),
+                  ],
                 ),
-                const Spacer(),
-                Text(
-                  '$humidity%',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1C1C1E),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Helper Method สร้างแถวข้อมูล
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color.fromARGB(255, 246, 19, 19)),
+          const SizedBox(width: 12),
+          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+          Expanded(child: Text(value)),
+        ],
       ),
     );
   }

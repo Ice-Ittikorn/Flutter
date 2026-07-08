@@ -43,3 +43,15 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# API Keys (สำคัญมาก!)
+.env
+*.env
+lib/config/api_keys.dart
+lib/config/api_config.dart
