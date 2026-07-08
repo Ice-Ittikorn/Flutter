@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -31,7 +32,7 @@ class _AiChatPageState extends State<AiChatPage> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 350),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutCubic,
         );
       }
@@ -107,6 +108,7 @@ class _AiChatPageState extends State<AiChatPage> {
 
   Widget _buildMessage(Map<String, String> message) {
     final isUser = message["role"] == "user";
+    final theme = Theme.of(context);
 
     if (isUser) {
       return Padding(
@@ -118,30 +120,26 @@ class _AiChatPageState extends State<AiChatPage> {
             Flexible(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF8B5CF6), Color(0xFFD946EF)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(4),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.zero,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0x22D946EF),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 8,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 3),
                     )
                   ],
                 ),
                 child: Text(
                   message["text"] ?? "",
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: theme.colorScheme.onPrimaryContainer,
                     fontSize: 15,
                     height: 1.4,
                   ),
@@ -162,23 +160,19 @@ class _AiChatPageState extends State<AiChatPage> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF3B82F6), Color(0xFF8B5CF6)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: theme.colorScheme.primary,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0x4D3B82F6),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   )
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.auto_awesome,
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
                 size: 18,
               ),
             ),
@@ -187,20 +181,20 @@ class _AiChatPageState extends State<AiChatPage> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.surfaceContainer.withValues(alpha: 0.5),
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(4),
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
+                    bottomLeft: Radius.zero,
                   ),
                   border: Border.all(
-                    color: const Color(0xFFE2E8F0),
+                    color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0x05000000),
+                      color: Colors.black.withValues(alpha: 0.02),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     )
@@ -208,8 +202,8 @@ class _AiChatPageState extends State<AiChatPage> {
                 ),
                 child: Text(
                   message["text"] ?? "",
-                  style: const TextStyle(
-                    color: Color(0xFF1E293B),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 15,
                     height: 1.4,
                   ),
@@ -224,23 +218,25 @@ class _AiChatPageState extends State<AiChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.surface,
         elevation: 0,
         centerTitle: false,
         title: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Color(0xFFF1F5F9),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainer,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.smart_toy_rounded,
-                color: Color(0xFF8B5CF6),
+                color: theme.colorScheme.primary,
                 size: 24,
               ),
             ),
@@ -248,10 +244,10 @@ class _AiChatPageState extends State<AiChatPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   "Gemini AI",
                   style: TextStyle(
-                    color: Color(0xFF0F172A),
+                    color: theme.colorScheme.onSurface,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -267,10 +263,10 @@ class _AiChatPageState extends State<AiChatPage> {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Text(
+                    Text(
                       "พร้อมคุยแล้วนะ",
                       style: TextStyle(
-                        color: Color(0xFF64748B),
+                        color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -284,7 +280,7 @@ class _AiChatPageState extends State<AiChatPage> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
-            color: const Color(0xFFF1F5F9),
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
             height: 1,
           ),
         ),
@@ -300,60 +296,56 @@ class _AiChatPageState extends State<AiChatPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 48),
                           Container(
-                            width: 90,
-                            height: 90,
+                            width: 88,
+                            height: 88,
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF8B5CF6), Color(0xFFD946EF)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
+                              color: theme.colorScheme.primaryContainer,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0x4CD946EF),
+                                  color: theme.colorScheme.primary.withValues(alpha: 0.15),
                                   blurRadius: 16,
                                   offset: const Offset(0, 8),
                                 )
                               ],
                             ),
-                            child: const Icon(
-                              Icons.auto_awesome,
-                              size: 45,
-                              color: Colors.white,
+                            child: Icon(
+                              Icons.forum_outlined,
+                              size: 40,
+                              color: theme.colorScheme.primary,
                             ),
                           ),
                           const SizedBox(height: 24),
-                          const Text(
+                          Text(
                             "ยินดีต้อนรับสู่ Gemini Chat!",
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF0F172A),
+                              color: theme.colorScheme.onSurface,
                             ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
-                          const Text(
+                          Text(
                             "ฉันคือบอท AI คู่ใจของคุณ\nลองพิมพ์คุยกับฉัน หรือแตะไอเดียด้านล่างนี้ได้เลยนะ ✨",
                             style: TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF64748B),
+                              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                               height: 1.5,
                             ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 40),
-                          const Align(
+                          Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               "💡 ไอเดียเริ่มคุย:",
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF475569),
+                                color: theme.colorScheme.primary,
                               ),
                             ),
                           ),
@@ -368,18 +360,18 @@ class _AiChatPageState extends State<AiChatPage> {
                                   width: double.infinity,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
-                                    vertical: 12,
+                                    vertical: 14,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: theme.colorScheme.surface,
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: const Color(0xFFE2E8F0),
+                                      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
                                       width: 1,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0x05000000),
+                                        color: Colors.black.withValues(alpha: 0.01),
                                         blurRadius: 6,
                                         offset: const Offset(0, 2),
                                       )
@@ -390,17 +382,17 @@ class _AiChatPageState extends State<AiChatPage> {
                                       Expanded(
                                         child: Text(
                                           suggestion,
-                                          style: const TextStyle(
-                                            fontSize: 13,
-                                            color: Color(0xFF334155),
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: theme.colorScheme.onSurface,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ),
-                                      const Icon(
+                                      Icon(
                                         Icons.arrow_forward_ios_rounded,
                                         size: 14,
-                                        color: Color(0xFF94A3B8),
+                                        color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                                       ),
                                     ],
                                   ),
@@ -423,33 +415,30 @@ class _AiChatPageState extends State<AiChatPage> {
           ),
           if (_isLoading)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 12.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0x99E2E8F0),
-                      borderRadius: BorderRadius.circular(20),
+                      color: theme.colorScheme.surfaceContainer.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
+                        const TypingIndicator(),
+                        const SizedBox(width: 10),
+                        Text(
                           "Gemini กำลังคิดอยู่...",
                           style: TextStyle(
                             fontSize: 12,
-                            color: Color(0xFF475569),
+                            color: theme.colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -461,10 +450,10 @@ class _AiChatPageState extends State<AiChatPage> {
             ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0x0D000000),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 10,
                   offset: const Offset(0, -4),
                 )
@@ -478,68 +467,60 @@ class _AiChatPageState extends State<AiChatPage> {
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
+                          color: theme.colorScheme.surfaceContainer.withValues(alpha: 0.4),
                           borderRadius: BorderRadius.circular(28),
-                        ),
-                        child: TextField(
-                          controller: _controller,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Color(0xFF1E293B),
+                          border: Border.all(
+                            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                            width: 1,
                           ),
-                          decoration: const InputDecoration(
-                            hintText: "คุยกับ Gemini...",
-                            hintStyle: TextStyle(
-                              color: Color(0xFF94A3B8),
-                              fontSize: 15,
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 14,
-                            ),
-                            border: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            focusedErrorBorder: InputBorder.none,
-                          ),
-                          onSubmitted: (_) => _sendMessage(),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: _isLoading ? null : () => _sendMessage(),
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: _isLoading
-                              ? null
-                              : const LinearGradient(
-                                  colors: [Color(0xFF8B5CF6), Color(0xFFD946EF)],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 14),
+                            Icon(
+                              Icons.auto_awesome,
+                              size: 20,
+                              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: TextField(
+                                controller: _controller,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: theme.colorScheme.onSurface,
                                 ),
-                          color: _isLoading ? const Color(0xFFCBD5E1) : null,
-                          shape: BoxShape.circle,
-                          boxShadow: _isLoading
-                              ? []
-                              : [
-                                  BoxShadow(
-                                    color: const Color(0x4CD946EF),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
-                                  )
-                                ],
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.send_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                                decoration: InputDecoration(
+                                  hintText: "คุยกับ Gemini...",
+                                  hintStyle: TextStyle(
+                                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                                    fontSize: 15,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  border: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  focusedErrorBorder: InputBorder.none,
+                                ),
+                                onSubmitted: (_) => _sendMessage(),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: _isLoading ? null : () => _sendMessage(),
+                              icon: Icon(
+                                Icons.send_rounded,
+                                color: _isLoading
+                                    ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4)
+                                    : theme.colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                          ],
                         ),
                       ),
                     ),
@@ -558,5 +539,67 @@ class _AiChatPageState extends State<AiChatPage> {
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+}
+
+class TypingIndicator extends StatefulWidget {
+  const TypingIndicator({super.key});
+
+  @override
+  State<TypingIndicator> createState() => _TypingIndicatorState();
+}
+
+class _TypingIndicatorState extends State<TypingIndicator> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _buildDot(int index) {
+    final theme = Theme.of(context);
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final double delay = index * 0.2;
+        final double val = (sin((_controller.value * 2 * pi) - (delay * 2 * pi)) + 1) / 2;
+        return Transform.translate(
+          offset: Offset(0, -val * 4),
+          child: Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withValues(alpha: 0.8),
+              shape: BoxShape.circle,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildDot(0),
+        const SizedBox(width: 4),
+        _buildDot(1),
+        const SizedBox(width: 4),
+        _buildDot(2),
+      ],
+    );
   }
 }
